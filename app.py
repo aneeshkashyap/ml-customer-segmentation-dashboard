@@ -2,6 +2,7 @@ import io
 import json
 import os
 import sqlite3
+import tempfile
 from datetime import datetime, timedelta
 from functools import wraps
 from io import StringIO
@@ -48,6 +49,9 @@ IS_PRODUCTION = (
     or IS_RAILWAY
 )
 
+if APP_BASE_URL and "://" not in APP_BASE_URL:
+    APP_BASE_URL = f"https://{APP_BASE_URL}"
+
 if not APP_BASE_URL:
     render_external_url = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
     railway_static_url = (os.getenv("RAILWAY_STATIC_URL") or "").strip().rstrip("/")
@@ -61,8 +65,8 @@ if not APP_BASE_URL:
         APP_BASE_URL = f"https://{railway_public_domain}"
 
 if IS_PRODUCTION and not APP_BASE_URL:
-    raise RuntimeError(
-        "APP_BASE_URL must be set in production (for example: https://your-app.onrender.com)."
+    app.logger.warning(
+        "APP_BASE_URL is not set in production. OAuth callbacks will use the incoming request host; set APP_BASE_URL for a fixed canonical domain."
     )
 
 if APP_BASE_URL:
@@ -76,6 +80,38 @@ if APP_BASE_URL:
         APP_BASE_URL = f"https://{parsed_base_url.netloc}"
         CANONICAL_OAUTH_HOST = parsed_base_url.netloc.lower()
 
+
+def resolve_data_dir() -> str:
+    configured_data_dir = (os.getenv("DATA_DIR") or "").strip()
+    candidate_dirs = []
+
+    if configured_data_dir:
+        candidate_dirs.append(configured_data_dir)
+
+    candidate_dirs.append(os.path.join(tempfile.gettempdir(), "ml_project"))
+    candidate_dirs.append(BASE_DIR)
+
+    for candidate in candidate_dirs:
+        try:
+            os.makedirs(candidate, exist_ok=True)
+            write_test_path = os.path.join(candidate, ".write_test")
+            with open(write_test_path, "w", encoding="utf-8") as handle:
+                handle.write("ok")
+            os.remove(write_test_path)
+
+            if configured_data_dir and candidate != configured_data_dir:
+                app.logger.warning(
+                    "Configured DATA_DIR '%s' is not writable. Falling back to '%s'.",
+                    configured_data_dir,
+                    candidate,
+                )
+
+            return candidate
+        except OSError:
+            continue
+
+    raise RuntimeError("Unable to find a writable DATA_DIR for runtime files.")
+
 app.config["PREFERRED_URL_SCHEME"] = "https"
 if CANONICAL_OAUTH_HOST:
     app.config["SERVER_NAME"] = CANONICAL_OAUTH_HOST
@@ -85,7 +121,7 @@ app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "true")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=12)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
-DATA_DIR = os.getenv("DATA_DIR", BASE_DIR)
+DATA_DIR = resolve_data_dir()
 UPLOAD_DIR = os.path.join(DATA_DIR, "uploads")
 IMAGE_DIR = os.path.join(BASE_DIR, "static", "images")
 DB_PATH = os.path.join(DATA_DIR, "app.db")

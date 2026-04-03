@@ -21,6 +21,7 @@ If using Blueprint deploy, Render can read these from `render.yaml`.
 
 Set these in Render service settings:
 
+- PYTHON_VERSION=3.11.9
 - SECRET_KEY
 - APP_BASE_URL=https://your-service-name.onrender.com
 - GOOGLE_OAUTH_CLIENT_ID
