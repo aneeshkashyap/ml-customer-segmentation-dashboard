@@ -393,12 +393,17 @@ h1 {
     box-shadow: 0 0 16px rgba(79, 124, 255, 0.35);
 }
 
+#results-shell {
+    display: grid;
+    gap: 20px;
+}
+
 .controls-row,
 .kpi-grid,
 .plot-grid,
 .insight-grid {
     display: grid;
-    gap: 16px;
+    gap: 20px;
 }
 
 .guide-grid {
