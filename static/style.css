@@ -60,22 +60,22 @@ body {
 .bg-ornament {
     position: fixed;
     z-index: 0;
-    width: 260px;
-    height: 260px;
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
-    filter: blur(70px);
+    filter: blur(88px);
 }
 
 .bg-1 {
     top: -80px;
     right: -90px;
-    background: rgba(79, 124, 255, 0.42);
+    background: rgba(79, 124, 255, 0.18);
 }
 
 .bg-2 {
     left: -80px;
     bottom: -90px;
-    background: rgba(8, 189, 168, 0.34);
+    background: rgba(8, 189, 168, 0.14);
 }
 
 .top-nav,
