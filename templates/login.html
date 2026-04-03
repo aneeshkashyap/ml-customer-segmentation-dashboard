@@ -23,55 +23,35 @@
                 <p>Securely access your personalized customer segmentation workspace.</p>
             </div>
 
+            {% if error %}
+            <div class="auth-message error">{{ error }}</div>
+            {% endif %}
+
             {% if success_message %}
             <div class="auth-message success">{{ success_message }}</div>
             {% endif %}
 
-            <div class="auth-divider"><span>or continue with</span></div>
+            <div class="auth-divider"><span>use your local account</span></div>
 
-            <div class="auth-actions">
-                {% if google_enabled %}
-                <a class="oauth-btn google" href="{{ url_for('google.login') }}" data-auth-btn>
-                    <img class="provider-logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
-                    Sign in with Google
-                </a>
-                {% else %}
-                <button class="oauth-btn disabled" type="button" disabled>
-                    <img class="provider-logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
-                    Google Not Configured
-                </button>
-                {% endif %}
-
-                {% if github_enabled %}
-                <a class="oauth-btn github" href="{{ url_for('github.login') }}" data-auth-btn>
-                    <img class="provider-logo" src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub logo" />
-                    Sign in with GitHub
-                </a>
-                {% else %}
-                <button class="oauth-btn disabled" type="button" disabled>
-                    <img class="provider-logo" src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub logo" />
-                    GitHub Not Configured
-                </button>
-                {% endif %}
-            </div>
-
-            <p class="oauth-hint">{{ oauth_hint }}</p>
-
-            {% if oauth_missing %}
-            <div class="auth-message {% if google_enabled or github_enabled %}warning{% else %}error{% endif %}">
-                {% if not google_enabled and oauth_missing.google %}
-                    <div>Missing Google variables: {{ oauth_missing.google | join(', ') }}</div>
-                {% endif %}
-                {% if not github_enabled and oauth_missing.github %}
-                    <div>Missing GitHub variables: {{ oauth_missing.github | join(', ') }}</div>
-                {% endif %}
-            </div>
+            {% if show_signup %}
+            <form class="local-auth-form" method="post" action="{{ url_for('signup') }}">
+                <h3>Create Account</h3>
+                <input type="text" name="name" placeholder="Full name" required />
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password (min 8 chars)" required minlength="8" />
+                <input type="password" name="confirm_password" placeholder="Confirm password" required minlength="8" />
+                <button class="primary-auth-btn" type="submit">Create Account</button>
+            </form>
+            <p class="oauth-hint">Already have an account? <a href="{{ url_for('login', mode='signin') }}">Sign in</a></p>
+            {% else %}
+            <form class="local-auth-form" method="post" action="{{ url_for('login_local') }}">
+                <h3>Sign In</h3>
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button class="primary-auth-btn" type="submit">Sign In</button>
+            </form>
+            <p class="oauth-hint">Need an account? <a href="{{ url_for('login', mode='signup') }}">Sign up</a></p>
             {% endif %}
-
-            <div id="auth-loading" class="auth-loading hidden">
-                <div class="spinner"></div>
-                <span>Redirecting to provider...</span>
-            </div>
         </section>
     </main>
 
@@ -80,14 +60,6 @@
             if (window.lucide) {
                 window.lucide.createIcons();
             }
-
-            const loading = document.getElementById("auth-loading");
-            const buttons = document.querySelectorAll("[data-auth-btn]");
-            buttons.forEach((btn) => {
-                btn.addEventListener("click", function () {
-                    loading.classList.remove("hidden");
-                });
-            });
         })();
     </script>
 </body>
