@@ -213,7 +213,7 @@ body {
 
 .hero {
     display: grid;
-    grid-template-columns: 1.6fr 0.5fr;
+    grid-template-columns: 1fr;
     gap: 12px;
     align-items: center;
 }
@@ -231,22 +231,39 @@ h1 {
     font-size: clamp(1.8rem, 3vw, 2.6rem);
 }
 
+.hero-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.hero-title-row h1 {
+    margin: 8px 0;
+}
+
+.hero-title-logo {
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+}
+
+.hero-title-logo i {
+    width: 28px;
+    height: 28px;
+    color: var(--secondary);
+}
+
 .hero-subtitle {
     margin: 0;
     color: var(--text-muted);
     max-width: 66ch;
     line-height: 1.5;
-}
-
-.hero-icon {
-    display: grid;
-    place-items: center;
-}
-
-.hero-icon i {
-    width: 56px;
-    height: 56px;
-    color: var(--secondary);
 }
 
 .progress-wrap {
@@ -979,6 +996,17 @@ tbody tr:hover {
 @media (max-width: 760px) {
     .hero {
         grid-template-columns: 1fr;
+    }
+
+    .hero-title-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
+    .hero-title-logo i {
+        width: 24px;
+        height: 24px;
     }
 
     .collapse-btn {
