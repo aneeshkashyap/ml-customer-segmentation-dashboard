@@ -398,6 +398,13 @@ h1 {
     gap: 32px;
 }
 
+.controls-row + .kpi-grid,
+.kpi-grid + .plot-grid,
+.plot-grid + .insight-grid,
+.insight-grid + .card {
+    margin-top: 10px;
+}
+
 .controls-row,
 .kpi-grid,
 .plot-grid,
