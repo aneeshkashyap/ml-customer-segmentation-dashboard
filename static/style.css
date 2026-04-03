@@ -395,7 +395,7 @@ h1 {
 
 #results-shell {
     display: grid;
-    gap: 20px;
+    gap: 32px;
 }
 
 .controls-row,
