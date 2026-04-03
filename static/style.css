@@ -111,6 +111,32 @@ body {
     letter-spacing: 0.2px;
 }
 
+.brand-title {
+    white-space: nowrap;
+}
+
+.brand-logo-chip {
+    display: inline-grid;
+    place-items: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(79, 124, 255, 0.45);
+    background: linear-gradient(135deg, rgba(79, 124, 255, 0.35), rgba(8, 189, 168, 0.35));
+    color: #f5f8ff;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+}
+
+:root[data-theme="light"] .brand-logo-chip {
+    border-color: rgba(51, 95, 242, 0.35);
+    background: linear-gradient(135deg, rgba(51, 95, 242, 0.22), rgba(7, 158, 141, 0.22));
+    color: #1a2342;
+}
+
 .nav-actions {
     display: flex;
     align-items: center;
@@ -975,8 +1001,15 @@ tbody tr:hover {
         display: none;
     }
 
-    .brand span {
+    .brand-title {
         font-size: 0.9rem;
+    }
+
+    .brand-logo-chip {
+        min-width: 30px;
+        height: 30px;
+        font-size: 0.56rem;
+        padding: 0 7px;
     }
 
     .kpi-grid {
