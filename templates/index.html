@@ -55,6 +55,50 @@
             </div>
         </section>
 
+        <section class="guide-grid fade-up">
+            <article class="card glass guide-card">
+                <div class="card-header">
+                    <h2><i data-lucide="brain"></i> K-Means Analytics</h2>
+                </div>
+                <p class="guide-text">
+                    K-Means groups customers with similar income and spending behavior so you can identify practical segments for marketing and retention.
+                </p>
+                <ol class="guide-list">
+                    <li>Upload a CSV with Annual Income (k$) and Spending Score (1-100).</li>
+                    <li>Use the Dynamic K Selector to choose the number of segments.</li>
+                    <li>Read KPI cards and Smart Insights to understand each segment size and behavior.</li>
+                </ol>
+            </article>
+
+            <article class="card glass guide-card">
+                <div class="card-header">
+                    <h2><i data-lucide="chart-line"></i> Elbow Graph</h2>
+                </div>
+                <p class="guide-text">
+                    The Elbow Graph helps you decide a balanced K value by showing how clustering error (inertia) changes as K increases.
+                </p>
+                <ol class="guide-list">
+                    <li>X-axis is K (number of clusters), Y-axis is inertia (lower is better).</li>
+                    <li>Find the bend point where the curve starts flattening.</li>
+                    <li>Start with the shown Optimal K, then test nearby values for business clarity.</li>
+                </ol>
+            </article>
+
+            <article class="card glass guide-card">
+                <div class="card-header">
+                    <h2><i data-lucide="scatter-chart"></i> Cluster Plot</h2>
+                </div>
+                <p class="guide-text">
+                    The Cluster Plot shows every customer point and makes segment separation visible at a glance.
+                </p>
+                <ol class="guide-list">
+                    <li>Each dot is a customer, and color indicates its assigned cluster.</li>
+                    <li>X marks are centroids, which represent each segment center.</li>
+                    <li>Use this view with the table and insights to build targeted actions per segment.</li>
+                </ol>
+            </article>
+        </section>
+
         <section class="progress-wrap glass fade-up">
             <div class="progress-step done" id="step-upload"><span>1</span>Upload</div>
             <div class="progress-line"></div>

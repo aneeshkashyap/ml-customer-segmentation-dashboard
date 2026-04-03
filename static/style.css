@@ -401,6 +401,33 @@ h1 {
     gap: 16px;
 }
 
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.guide-card {
+    display: grid;
+    gap: 8px;
+}
+
+.guide-text {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.5;
+    font-size: 0.92rem;
+}
+
+.guide-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+    line-height: 1.45;
+    font-size: 0.9rem;
+}
+
 .controls-row {
     grid-template-columns: 1.2fr 0.8fr;
 }
@@ -894,6 +921,7 @@ tbody tr:hover {
 }
 
 @media (max-width: 1024px) {
+    .guide-grid,
     .controls-row,
     .kpi-grid,
     .plot-grid,
