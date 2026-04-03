@@ -48,6 +48,18 @@ IS_PRODUCTION = (
     or IS_RAILWAY
 )
 
+if not APP_BASE_URL:
+    render_external_url = (os.getenv("RENDER_EXTERNAL_URL") or "").strip().rstrip("/")
+    railway_static_url = (os.getenv("RAILWAY_STATIC_URL") or "").strip().rstrip("/")
+    railway_public_domain = (os.getenv("RAILWAY_PUBLIC_DOMAIN") or "").strip()
+
+    if render_external_url:
+        APP_BASE_URL = render_external_url
+    elif railway_static_url:
+        APP_BASE_URL = railway_static_url
+    elif railway_public_domain:
+        APP_BASE_URL = f"https://{railway_public_domain}"
+
 if IS_PRODUCTION and not APP_BASE_URL:
     raise RuntimeError(
         "APP_BASE_URL must be set in production (for example: https://your-app.onrender.com)."
