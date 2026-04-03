@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Customer Segmentation Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="bg-ornament bg-1"></div>
+    <div class="bg-ornament bg-2"></div>
+
+    <main class="auth-wrapper">
+        <section class="auth-card glass">
+            <div class="auth-header">
+                <i data-lucide="shield-check"></i>
+                <h1>Sign In</h1>
+                <p>Securely access your personalized customer segmentation workspace.</p>
+            </div>
+
+            {% if success_message %}
+            <div class="auth-message success">{{ success_message }}</div>
+            {% endif %}
+
+            <div class="auth-divider"><span>or continue with</span></div>
+
+            <div class="auth-actions">
+                {% if google_enabled %}
+                <a class="oauth-btn google" href="{{ url_for('google.login') }}" data-auth-btn>
+                    <img class="provider-logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+                    Sign in with Google
+                </a>
+                {% else %}
+                <button class="oauth-btn disabled" type="button" disabled>
+                    <img class="provider-logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+                    Google Not Configured
+                </button>
+                {% endif %}
+
+                {% if github_enabled %}
+                <a class="oauth-btn github" href="{{ url_for('github.login') }}" data-auth-btn>
+                    <img class="provider-logo" src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub logo" />
+                    Sign in with GitHub
+                </a>
+                {% else %}
+                <button class="oauth-btn disabled" type="button" disabled>
+                    <img class="provider-logo" src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub logo" />
+                    GitHub Not Configured
+                </button>
+                {% endif %}
+            </div>
+
+            <p class="oauth-hint">{{ oauth_hint }}</p>
+
+            {% if oauth_missing %}
+            <div class="auth-message {% if google_enabled or github_enabled %}warning{% else %}error{% endif %}">
+                {% if not google_enabled and oauth_missing.google %}
+                    <div>Missing Google variables: {{ oauth_missing.google | join(', ') }}</div>
+                {% endif %}
+                {% if not github_enabled and oauth_missing.github %}
+                    <div>Missing GitHub variables: {{ oauth_missing.github | join(', ') }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div id="auth-loading" class="auth-loading hidden">
+                <div class="spinner"></div>
+                <span>Redirecting to provider...</span>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+
+            const loading = document.getElementById("auth-loading");
+            const buttons = document.querySelectorAll("[data-auth-btn]");
+            buttons.forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    loading.classList.remove("hidden");
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

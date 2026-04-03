@@ -1,0 +1,20 @@
+.vercel
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Runtime data
+app.db
+uploads/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

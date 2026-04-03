@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Segmentation Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    <div class="bg-ornament bg-1"></div>
+    <div class="bg-ornament bg-2"></div>
+
+    <nav class="top-nav glass">
+        <div class="brand">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Customer Segmentation Dashboard</span>
+        </div>
+        <div class="nav-actions">
+            <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Toggle dark and light mode">
+                <i data-lucide="moon-star"></i>
+                <span>Dark</span>
+            </button>
+            <div class="user-pill">
+                {% if user and user.avatar_url %}
+                    <img src="{{ user.avatar_url }}" alt="User avatar" class="avatar" />
+                {% else %}
+                    <span class="avatar avatar-fallback">{{ (user.name or 'U')[0]|upper }}</span>
+                {% endif %}
+                <div>
+                    <p>{{ user.name }}</p>
+                    <span>{{ user.email }}</span>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="secondary-btn logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero glass fade-up">
+            <div>
+                <p class="eyebrow">ML Product Experience</p>
+                <h1>Customer Segmentation Dashboard</h1>
+                <p class="hero-subtitle">
+                    Interactive K-Means analytics with live parameter tuning, smart cluster profiling,
+                    and export-ready insights for business decisions.
+                </p>
+            </div>
+            <div class="hero-icon" aria-hidden="true">
+                <i data-lucide="orbit"></i>
+            </div>
+        </section>
+
+        <section class="progress-wrap glass fade-up">
+            <div class="progress-step done" id="step-upload"><span>1</span>Upload</div>
+            <div class="progress-line"></div>
+            <div class="progress-step {% if success %}done{% else %}active{% endif %}" id="step-process"><span>2</span>Process</div>
+            <div class="progress-line"></div>
+            <div class="progress-step {% if success %}active{% endif %}" id="step-results"><span>3</span>Results</div>
+        </section>
+
+        <section class="card glass fade-up" id="upload-card">
+            <div class="card-header with-collapse">
+                <h2><i data-lucide="upload"></i> Upload Section</h2>
+                <button class="collapse-btn" data-collapse-target="upload-body" type="button">Toggle</button>
+            </div>
+
+            <div id="upload-body" class="section-body">
+            <form id="upload-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+                <input id="dataset" class="file-input" type="file" name="dataset" accept=".csv" required />
+                <label for="dataset" id="drop-zone" class="drop-zone">
+                        <i data-lucide="file-up" class="drop-icon"></i>
+                    <span class="drop-title">Drag and drop Mall_Customers.csv here</span>
+                    <span class="drop-caption">or click to browse</span>
+                        <span id="file-name" class="file-name">{% if uploaded_filename %}{{ uploaded_filename }}{% else %}No file selected{% endif %}</span>
+                </label>
+                <button type="submit" class="primary-btn">Run Segmentation</button>
+            </form>
+            </div>
+        </section>
+
+        <section id="results-shell" class="{% if not success %}hidden{% endif %}">
+            <section class="controls-row fade-up">
+                <article class="card glass k-control-card">
+                    <div class="card-header">
+                        <h2><i data-lucide="sliders-horizontal"></i> Dynamic K Selector</h2>
+                    </div>
+                    <div class="k-control">
+                        <input id="k-slider" type="range" min="2" max="10" value="2" />
+                        <div class="k-values">
+                            <span>Selected K: <strong id="k-value">2</strong></span>
+                            <span>Optimal K: <strong id="optimal-k">-</strong></span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card glass export-card">
+                    <div class="card-header">
+                        <h2><i data-lucide="download"></i> Export</h2>
+                    </div>
+                    <div class="export-actions">
+                        <a id="download-csv-btn" class="secondary-btn" href="#">Download Clustered CSV</a>
+                        <a id="download-pdf-btn" class="secondary-btn" href="#">Download Full PDF</a>
+                        <button id="download-elbow-btn" class="secondary-btn" type="button">Elbow PNG</button>
+                        <button id="download-cluster-btn" class="secondary-btn" type="button">Cluster PNG</button>
+                        <button id="save-result-btn" class="primary-btn" type="button">Save Result to Profile</button>
+                    </div>
+                </article>
+            </section>
+
+            <section class="kpi-grid fade-up" id="kpi-grid"></section>
+
+            <section class="plot-grid fade-up">
+                <article class="card glass">
+                    <div class="card-header with-collapse">
+                        <h2><i data-lucide="chart-line"></i> Elbow Graph</h2>
+                        <button class="collapse-btn" data-collapse-target="elbow-body" type="button">Toggle</button>
+                    </div>
+                    <div id="elbow-body" class="section-body">
+                        <div id="elbow-chart" class="plot-box"></div>
+                    </div>
+                </article>
+
+                <article class="card glass">
+                    <div class="card-header with-collapse">
+                        <h2><i data-lucide="scatter-chart"></i> Cluster Plot</h2>
+                        <button class="collapse-btn" data-collapse-target="cluster-body" type="button">Toggle</button>
+                    </div>
+                    <div id="cluster-body" class="section-body">
+                        <div id="cluster-chart" class="plot-box"></div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="insight-grid fade-up">
+                <article class="card glass">
+                    <div class="card-header">
+                        <h2><i data-lucide="brain"></i> Smart Insights</h2>
+                    </div>
+                    <div id="insight-cards" class="cluster-cards"></div>
+                </article>
+
+                <article class="card glass">
+                    <div class="card-header">
+                        <h2><i data-lucide="database"></i> Advanced Table</h2>
+                    </div>
+
+                    <div class="table-controls">
+                        <input id="table-search" type="text" placeholder="Search income, score or cluster" />
+                        <select id="cluster-filter">
+                            <option value="all">All Clusters</option>
+                        </select>
+                        <select id="sort-by">
+                            <option value="income-desc">Income: High to Low</option>
+                            <option value="income-asc">Income: Low to High</option>
+                            <option value="score-desc">Score: High to Low</option>
+                            <option value="score-asc">Score: Low to High</option>
+                            <option value="cluster-asc">Cluster: Low to High</option>
+                            <option value="cluster-desc">Cluster: High to Low</option>
+                        </select>
+                    </div>
+
+                    <div class="table-wrap data-table-wrap">
+                        <table id="result-table">
+                            <thead>
+                                <tr>
+                                    <th>Income</th>
+                                    <th>Spending Score</th>
+                                    <th>Cluster</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="pagination"></div>
+                </article>
+            </section>
+
+            <section class="card glass fade-up">
+                <div class="card-header">
+                    <h2><i data-lucide="history"></i> Saved Results</h2>
+                </div>
+                <div id="saved-results-list" class="saved-results-list">
+                    <p class="empty-text">No saved results yet.</p>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div id="loader-overlay" class="loader-overlay" aria-hidden="true">
+        <div class="spinner"></div>
+        <p id="loader-text">Processing dataset...</p>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    {% if error %}
+    <div id="server-error" data-message="{{ error|e }}"></div>
+    {% endif %}
+
+    <script id="boot-data" type="application/json">{{ {'success': success|default(false), 'data': initial_data|default(None)}|tojson }}</script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

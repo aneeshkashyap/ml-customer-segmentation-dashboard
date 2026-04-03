@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: ml-customer-segmentation-dashboard
+    env: python
+    plan: free
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_ID
+        sync: false
+      - key: GITHUB_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      - key: FLASK_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data/ml-project
+    disks:
+      - name: app-data
+        mountPath: /var/data
+        sizeGB: 1
